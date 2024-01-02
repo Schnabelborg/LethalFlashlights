@@ -11,7 +11,7 @@ namespace LethalModding
         {
             // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-            Harmony.CreateAndPatchAll(typeof(FlashlightItem), PluginInfo.PLUGIN_GUID);
+            Harmony.CreateAndPatchAll(typeof(FlashlightPatch), PluginInfo.PLUGIN_GUID);
         }
     }
 }
