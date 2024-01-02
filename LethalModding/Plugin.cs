@@ -1,4 +1,6 @@
-﻿using BepInEx;
+﻿using System;
+using BepInEx;
+using HarmonyLib;
 
 namespace LethalModding
 {
@@ -9,6 +11,7 @@ namespace LethalModding
         {
             // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Harmony.CreateAndPatchAll(typeof(FlashlightItem), PluginInfo.PLUGIN_GUID);
         }
     }
 }
