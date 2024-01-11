@@ -34,6 +34,9 @@
     <Reference Include="BepInEx">
       <HintPath>D:\Programme\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="LethalConfig">
+      <HintPath>..\..\..\LethalConfig.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Netcode.Components">
       <HintPath>D:\Programme\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Components.dll</HintPath>
     </Reference>
