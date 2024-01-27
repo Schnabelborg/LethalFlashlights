@@ -1,29 +1,44 @@
 ﻿using HarmonyLib;
 using System;
 using BepInEx.Logging;
-using LethalModding;
-using BepInEx.Configuration;
+using Unity.Netcode;
+using GameNetcodeStuff;
 
 namespace LethalModding
 {
     public static class FlashlightPatch
     {
         private static ManualLogSource logger = BepInEx.Logging.Logger.CreateLogSource("FlashlightPatch");
-
-        [HarmonyPatch(typeof(FlashlightItem), nameof(FlashlightItem.ItemActivate))] [HarmonyPrefix]
-        public static void Prefix(FlashlightItem __instance)
+        public static void Explosion(FlashlightItem __instance)
         {
             float explosionRate = LethalFlashlights.configExplosionRate.Value;
-            Random rand = new Random();
+            Random rand = new();
             float flashLightFailure = (float)(rand.Next(0, 10000) / 100);
             if (flashLightFailure <= explosionRate)
             {
-                logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID}: Flashlight breaky whoops");
-                UnityEngine.Vector3 playerpos = GameNetworkManager.Instance.localPlayerController.gameObject.transform.position;
-                Landmine.SpawnExplosion(playerpos, spawnExplosionEffect: true, 1f, 1f);
+                logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID}: Flashlight failure");
+                UnityEngine.Vector3 playerpos = (UnityEngine.Vector3)__instance.playerHeldBy?.transform.position;
+                logger.LogDebug($"Plugin {PluginInfo.PLUGIN_GUID}: Explosion spawned at {playerpos}");
+
+                Landmine.SpawnExplosion(playerpos, spawnExplosionEffect: true, 3f, 5f);
                 return;
             }
         }
 
+        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemServerRpc")]
+        [HarmonyPostfix]
+        private static void ServerRpcPatch(GrabbableObject __instance)
+        {
+            NetworkManager networkManager = __instance.NetworkManager;
+            if ((object)networkManager != null && networkManager.IsListening)
+            {
+                if ((networkManager.IsServer || networkManager.IsHost) && __instance is FlashlightItem flashlight && __instance.playerHeldBy != null)
+                {
+                    logger.LogDebug($"Plugin {PluginInfo.PLUGIN_GUID}: Flashlight detected");
+                    Explosion(flashlight);
+
+                }
+            }
+        }
     }
 }
