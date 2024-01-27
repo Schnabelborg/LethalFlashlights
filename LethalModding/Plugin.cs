@@ -23,6 +23,7 @@ namespace LethalModding
 
             FloatStepSliderConfigItem explosionRateSlider = new FloatStepSliderConfigItem(configExplosionRate, new FloatStepSliderOptions
             {
+                RequiresRestart = false,
                 Min = 0f,
                 Max = 100f,
                 Step = 0.01f
